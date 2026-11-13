@@ -1,0 +1,15 @@
+{
+  "kb_path": "../kb/kb.joblib",
+  "top_n_channel": 50,
+  "top_k": 5,
+  "rerank_candidates": 8,
+  "k_rrf": 60,
+  "similarity_threshold": 0.15,
+  "use_llm_rerank": true,
+  "max_code_chars": 12000,
+  "llm": { "temperature": 0.3, "top_p": 0.9, "max_tokens": 1024, "timeout_s": 60 },
+  "weights": {
+    "statement": { "code": 0.35, "line_change": 0.25, "ast": 0.20, "knowledge": 0.15, "ast_change": 0.05 },
+    "structure": { "ast": 0.40, "ast_change": 0.30, "code": 0.15, "line_change": 0.10, "knowledge": 0.05 }
+  }
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "label": "gpac CVE-2021-40576 (vulnerable version)",
+    "cve": "CVE-2021-40576",
+    "cwe": "CWE-476",
+    "expected": "vulnerable",
+    "code": "u32 GetHintFormat(GF_TrackBox *trak)\n{\n\tGF_HintMediaHeaderBox *hmhd = (GF_HintMediaHeaderBox *)trak->Media->information->InfoHeader;\n\tif (hmhd->type != GF_ISOM_BOX_TYPE_HMHD)\n\t\treturn 0;\n\t\t\n\tif (!hmhd || !hmhd->subType) {\n\t\tGF_Box *a = (GF_Box *)gf_list_get(trak->Media->information->sampleTable->SampleDescription->child_boxes, 0);\n\t\tif (!hmhd) return a ? a->type : 0;\n\t\tif (a) hmhd->subType = a->type;\n\t\treturn hmhd->subType;\n\t}\n\treturn hmhd->subType;\n}"
+  },
+  {
+    "label": "gpac CVE-2021-40576 (fixed version)",
+    "cve": "CVE-2021-40576",
+    "cwe": "CWE-476",
+    "expected": "fixed",
+    "code": "u32 GetHintFormat(GF_TrackBox *trak)\n{\n\tGF_HintMediaHeaderBox *hmhd = (GF_HintMediaHeaderBox *)trak->Media->information->InfoHeader;\n\tif (!hmhd || (hmhd->type != GF_ISOM_BOX_TYPE_HMHD))\n\t\treturn 0;\n\t\t\n\tif (!hmhd || !hmhd->subType) {\n\t\tGF_Box *a = (GF_Box *)gf_list_get(trak->Media->information->sampleTable->SampleDescription->child_boxes, 0);\n\t\tif (!hmhd) return a ? a->type : 0;\n\t\tif (a) hmhd->subType = a->type;\n\t\treturn hmhd->subType;\n\t}\n\treturn hmhd->subType;\n}"
+  },
+  {
+    "label": "mruby CVE-2021-4188 (vulnerable version)",
+    "cve": "CVE-2021-4188",
+    "cwe": "CWE-476",
+    "expected": "vulnerable",
+    "code": "mrb_ary_shift_m(mrb_state *mrb, mrb_value self)\n{\n  struct RArray *a = mrb_ary_ptr(self);\n  mrb_int len = ARY_LEN(a);\n  mrb_int n;\n  mrb_value val;\n\n  if (mrb_get_args(mrb, \"|i\", &n) == 0) {\n    return mrb_ary_shift(mrb, self);\n  };\n  ary_modify_check(mrb, a);\n  if (len == 0 || n == 0) return mrb_ary_new(mrb);\n  if (n < 0) mrb_raise(mrb, E_ARGUMENT_ERROR, \"negative array shift\");\n  if (n > len) n = len;\n  val = mrb_ary_new_from_values(mrb, n, ARY_PTR(a));\n  if (ARY_SHARED_P(a)) {\n  L_SHIFT:\n    a->as.heap.ptr+=n;\n    a->as.heap.len-=n;\n    return val;\n  }\n  if (len > ARY_SHIFT_SHARED_MIN) {\n    ary_make_shared(mrb, a);\n    goto L_SHIFT;\n  }\n  else if (len == n) {\n    ARY_SET_LEN(a, 0);\n  }\n  else {\n    mrb_value *ptr = ARY_PTR(a);\n    mrb_int size = len-n;\n\n    while (size--) {\n      *ptr = *(ptr+n);\n      ++ptr;\n    }\n    ARY_SET_LEN(a, len-n);\n  }\n  return val;\n}"
+  },
+  {
+    "label": "mruby CVE-2021-4188 (fixed version)",
+    "cve": "CVE-2021-4188",
+    "cwe": "CWE-476",
+    "expected": "fixed",
+    "code": "mrb_ary_shift_m(mrb_state *mrb, mrb_value self)\n{\n  mrb_int n;\n\n  if (mrb_get_args(mrb, \"|i\", &n) == 0) {\n    return mrb_ary_shift(mrb, self);\n  }\n\n  struct RArray *a = mrb_ary_ptr(self);\n  mrb_int len = ARY_LEN(a);\n  mrb_value val;\n\n  ary_modify_check(mrb, a);\n  if (len == 0 || n == 0) return mrb_ary_new(mrb);\n  if (n < 0) mrb_raise(mrb, E_ARGUMENT_ERROR, \"negative array shift\");\n  if (n > len) n = len;\n  val = mrb_ary_new_from_values(mrb, n, ARY_PTR(a));\n  if (ARY_SHARED_P(a)) {\n  L_SHIFT:\n    a->as.heap.ptr+=n;\n    a->as.heap.len-=n;\n    return val;\n  }\n  if (len > ARY_SHIFT_SHARED_MIN) {\n    ary_make_shared(mrb, a);\n    goto L_SHIFT;\n  }\n  else if (len == n) {\n    ARY_SET_LEN(a, 0);\n  }\n  else {\n    mrb_value *ptr = ARY_PTR(a);\n    mrb_int size = len-n;\n\n    while (size--) {\n      *ptr = *(ptr+n);\n      ++ptr;\n    }\n    ARY_SET_LEN(a, len-n);\n  }\n  return val;\n}"
+  },
+  {
+    "label": "tensorflow CVE-2022-23579 (vulnerable version)",
+    "cve": "CVE-2022-23579",
+    "cwe": "CWE-617",
+    "expected": "vulnerable",
+    "code": "bool DependencyOptimizer::SafeToRemoveIdentity(const NodeDef& node) const {\n  if (!IsIdentity(node) && !IsIdentityN(node)) {\n    return true;\n  }\n\n  if (nodes_to_preserve_.find(node.name()) != nodes_to_preserve_.end()) {\n    return false;\n  }\n  if (!fetch_nodes_known_) {\n    // The output values of this node may be needed.\n    return false;\n  }\n\n  if (node.input_size() < 1) {\n    // Node lacks input, is invalid\n    return false;\n  }\n\n  const NodeDef* input = node_map_->GetNode(NodeName(node.input(0)));\n  CHECK(input != nullptr) << \"node = \" << node.name()\n                          << \" input = \" << node.input(0);\n  // Don't remove Identity nodes corresponding to Variable reads or following\n  // Recv.\n  if (IsVariable(*input) || IsRecv(*input)) {\n    return false;\n  }\n  for (const auto& consumer : node_map_->GetOutputs(node.name())) {\n    if (node.input_size() > 1 && (IsRetval(*consumer) || IsMerge(*consumer))) {\n      return false;\n    }\n    if (IsSwitch(*input)) {\n      for (const string& consumer_input : consumer->input()) {\n        if (consumer_input == AsControlDependency(node.name())) {\n          return false;\n        }\n      }\n    }\n  }\n  return true;\n}"
+  },
+  {
+    "label": "tensorflow CVE-2022-23579 (fixed version)",
+    "cve": "CVE-2022-23579",
+    "cwe": "CWE-617",
+    "expected": "fixed",
+    "code": "bool DependencyOptimizer::SafeToRemoveIdentity(const NodeDef& node) const {\n  if (!IsIdentity(node) && !IsIdentityN(node)) {\n    return true;\n  }\n\n  if (nodes_to_preserve_.find(node.name()) != nodes_to_preserve_.end()) {\n    return false;\n  }\n  if (!fetch_nodes_known_) {\n    // The output values of this node may be needed.\n    return false;\n  }\n\n  if (node.input_size() < 1) {\n    // Node lacks input, is invalid\n    return false;\n  }\n\n  const NodeDef* input = node_map_->GetNode(NodeName(node.input(0)));\n  if (input == nullptr) {\n    VLOG(1) << \"node = \" << node.name() << \" input = \" << node.input(0);\n    return false;\n  }\n  // Don't remove Identity nodes corresponding to Variable reads or following\n  // Recv.\n  if (IsVariable(*input) || IsRecv(*input)) {\n    return false;\n  }\n  for (const auto& consumer : node_map_->GetOutputs(node.name())) {\n    if (node.input_size() > 1 && (IsRetval(*consumer) || IsMerge(*consumer))) {\n      return false;\n    }\n    if (IsSwitch(*input)) {\n      for (const string& consumer_input : consumer->input()) {\n        if (consumer_input == AsControlDependency(node.name())) {\n          return false;\n        }\n      }\n    }\n  }\n  return true;\n}"
+  }
+]

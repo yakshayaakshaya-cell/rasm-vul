@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RASM-Vul: vulnerability screening</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div>
+      <h1>RASM-Vul</h1>
+      <p class="tag">Check whether a C/C++ function is the vulnerable or the fixed version, using the closest bugs and patches seen before.</p>
+    </div>
+    <div class="status" id="status" aria-live="polite">Connecting to server</div>
+  </header>
+
+  <main class="layout">
+    <section class="input" aria-labelledby="in-h">
+      <h2 id="in-h">Function to check</h2>
+      <div class="row">
+        <label for="example">Load an example</label>
+        <select id="example"><option value="">Choose a sample</option></select>
+      </div>
+      <textarea id="code" spellcheck="false" placeholder="Paste one C or C++ function here"></textarea>
+      <div class="row actions">
+        <button id="run" type="button">Analyze function</button>
+        <button id="clear" type="button" class="ghost">Clear</button>
+        <span id="expected" class="hint"></span>
+      </div>
+      <p class="hint">This is a screening aid. It is tuned to catch most real bugs, so it also flags some fixed code. A person should review every flag.</p>
+    </section>
+
+    <section class="output" aria-labelledby="out-h" aria-live="polite">
+      <h2 id="out-h" class="sr">Result</h2>
+      <div id="empty" class="empty">
+        <p><strong>No result yet.</strong></p>
+        <p>Paste a function and press Analyze. You will get a verdict, a CWE label, a short explanation, and the past cases it was compared against.</p>
+      </div>
+      <div id="result" hidden></div>
+      <div id="error" class="error" hidden role="alert"></div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
